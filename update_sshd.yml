@@ -1,0 +1,27 @@
+---
+# file: update_sshd.yml
+
+
+- name: Change PermitRootLogin to without-password
+  become: yes
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin'
+    line: "PermitRootLogin without-password"
+    state: present
+    backrefs: yes
+    backup: yes
+    validate: '/usr/sbin/sshd -t -f %s'
+  register: sshd_updated
+  notify: sshd_restart
+
+- name: Insert PermitRootLogin in sshd_config if not found
+  become: yes
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    line: "PermitRootLogin without-password"
+    state: present
+    backup: yes
+    validate: '/usr/sbin/sshd -t -f %s'
+  notify: sshd_restart
+  when: not sshd_updated is changed
