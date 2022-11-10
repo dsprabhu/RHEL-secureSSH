@@ -1,6 +1,8 @@
 ---
-# file: update_sshd.yml
-
+- name: setup webserver
+  hosts: all
+  become: true
+  become_user: root
 
 - name: Change PermitRootLogin to without-password
   become: yes
